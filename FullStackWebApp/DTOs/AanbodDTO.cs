@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FullStackWebApp.Models
 {
-    public class DataObject
+    public class AanbodDTO
     {
         public int GlobalId { get; set; }
         public string Id { get; set; }

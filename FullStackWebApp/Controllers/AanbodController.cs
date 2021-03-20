@@ -17,9 +17,9 @@ namespace FullStackWebApp.Controllers
     public class AanbodController : ControllerBase
     {
         private readonly MainSqlServerDbContext _context;
-        private Service _service;
+        private FundaService _service;
 
-        public AanbodController(MainSqlServerDbContext context, Service service)
+        public AanbodController(MainSqlServerDbContext context, FundaService service)
         {
             _context = context;
             _service = service;
@@ -30,14 +30,14 @@ namespace FullStackWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAanbodFromUrl()
         {
-            var res = await _service.GetData<ResponseData>();
+            var res = await _service.GetData<List<Aanbod>>();
 
             if (res == null)
             {
                 return NotFound("There is no data");
             }
 
-            return Ok(res);
+            return Ok();
         }
 
         // GET: api/Aanbod

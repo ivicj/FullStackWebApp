@@ -15,7 +15,6 @@ namespace FullStackWebApp.DbContexts
         }
 
         public DbSet<Aanbod> Aanbod { get; set; }
-        public DbSet<Makelaar> Makelaar { get; set; }
 
     }
 }

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace FullStackWebApp.Models
 {
@@ -11,10 +13,6 @@ namespace FullStackWebApp.Models
     [Serializable]
     public class Aanbod
     {
-        public Aanbod()
-        {
-            Makelaar = new Makelaar();
-        }
 
         [Key]
         [DataMember]
@@ -36,7 +34,11 @@ namespace FullStackWebApp.Models
         public bool Tuin { get; set; }
 
         [DataMember]
-        public Makelaar Makelaar { get; set; }
+        public int MakelaarId { get; set; }
+
+        [DataMember]
+        [MaxLength(100)]
+        public string MakelaarNaam { get; set; }
 
     }
 }

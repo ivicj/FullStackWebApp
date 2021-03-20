@@ -40,10 +40,9 @@ namespace FullStackWebApp
             });
 
             services.AddDbContext<MainSqlServerDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DevConnection"))
-            );
+                options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
 
-            services.AddHttpClient<Service>();
+            services.AddHttpClient<FundaService>();
             //services.AddAutoMapper(typeof(Startup));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -53,9 +52,9 @@ namespace FullStackWebApp
             services.AddSingleton<IJobFactory, SingletonJobFactory>();
             services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
             // Add our job
-            services.AddSingleton<ApiJob>();
+            services.AddSingleton<FundaAanbodJob>();
             services.AddSingleton(new JobSchedule(
-                jobType: typeof(ApiJob),
+                jobType: typeof(FundaAanbodJob),
                 cronExpression: "0 0/5 * 1/1 * ? *")); // run every 5 min
         }
 
