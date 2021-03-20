@@ -9,9 +9,9 @@ namespace FullStackWebApp.DbContexts
 {
     public class MainSqlServerDbContext : DbContext
     {
-        public MainSqlServerDbContext(DbContextOptions<MainSqlServerDbContext> options):base(options)
+        public MainSqlServerDbContext(DbContextOptions<MainSqlServerDbContext> options) : base(options)
         {
-                
+
         }
 
         public DbSet<Aanbod> Aanbod { get; set; }

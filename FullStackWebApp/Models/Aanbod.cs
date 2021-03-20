@@ -11,6 +11,11 @@ namespace FullStackWebApp.Models
     [Serializable]
     public class Aanbod
     {
+        public Aanbod()
+        {
+            Makelaar = new Makelaar();
+        }
+
         [Key]
         [DataMember]
         public int Id { get; set; }

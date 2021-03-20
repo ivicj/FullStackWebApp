@@ -43,6 +43,8 @@ namespace FullStackWebApp
                 options.UseSqlServer(Configuration.GetConnectionString("DevConnection"))
             );
 
+            services.AddHttpClient<Service>();
+
             // Add Quartz services
             services.AddHostedService<QuartzHostedService>();
             services.AddSingleton<IJobFactory, SingletonJobFactory>();
