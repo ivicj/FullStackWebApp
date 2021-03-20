@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using FullStackWebApp.DbContexts;
 using FullStackWebApp.Models;
 using System.Net.Http;
+using AutoMapper;
 
 namespace FullStackWebApp.Controllers
 {
@@ -29,14 +30,14 @@ namespace FullStackWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAanbodFromUrl()
         {
-            //return await _context.Aanbod.ToListAsync();
-            ResponseData res = await _service.GetData<ResponseData>();
-            if(res == null)
+            var res = await _service.GetData<ResponseData>();
+
+            if (res == null)
             {
                 return NotFound("There is no data");
             }
 
-            return Ok();
+            return Ok(res);
         }
 
         // GET: api/Aanbod

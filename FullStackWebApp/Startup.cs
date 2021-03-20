@@ -44,6 +44,9 @@ namespace FullStackWebApp
             );
 
             services.AddHttpClient<Service>();
+            //services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
             // Add Quartz services
             services.AddHostedService<QuartzHostedService>();

@@ -16,7 +16,7 @@ namespace FullStackWebApp.Models
         public int Id { get; set; }
 
         [DataMember]
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string Name { get; set; }
     }
 }

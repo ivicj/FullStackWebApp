@@ -22,7 +22,11 @@ namespace FullStackWebApp.Models
 
         [DataMember]
         [MaxLength(50)]
-        public string Type { get; set; }
+        public string GUID { get; set; }
+
+        [DataMember]
+        [MaxLength(50)]
+        public string Type { get; set; } = "koop";
 
         [DataMember]
         [MaxLength(50)]

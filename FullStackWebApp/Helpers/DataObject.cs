@@ -7,8 +7,10 @@ namespace FullStackWebApp.Models
 {
     public class DataObject
     {
+        public int GlobalId { get; set; }
+        public string Id { get; set; }
         public string Woonplaats { get; set; }
-        public string MakelaarId { get; set; }
+        public int MakelaarId { get; set; }
         public string MakelaarNaam { get; set; }
     }
 }
