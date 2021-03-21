@@ -35,7 +35,12 @@ namespace FullStackWebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
+             {
+                 builder.WithOrigins("https://localhost:44381",
+                                     "http://localhost:44381").AllowAnyMethod().AllowAnyOrigin();
+             }));
+            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -46,8 +51,6 @@ namespace FullStackWebApp
                 options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
 
             services.AddHttpClient<FundaService>();
-                //.SetHandlerLifetime(TimeSpan.FromMinutes(3))  //Set lifetime to 3 minutes
-                //.AddPolicyHandler(GetRetryPolicy());
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // Add Quartz services
@@ -64,6 +67,8 @@ namespace FullStackWebApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("ApiCorsPolicy");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -1,1 +1,26 @@
-<p>makelaar-list works!</p>
+<mat-card class="mat-elevation-z1">
+    <mat-card-content>
+        <mat-card-title>
+            <span> Scorebord lijst {{ tuin ? 'met tuin' : ''  }}</span>
+        </mat-card-title>
+        <div class="mat-table-container">
+            <table mat-table [dataSource]="makelaars">
+                <ng-container matColumnDef="Place">
+                    <th mat-header-cell *matHeaderCellDef>{{'Plaats'}}<th>
+                    <td mat-cell *matCellDef="let row; let i = index;">{{ i+1 }}</td>
+                </ng-container>
+                <ng-container matColumnDef="Name">
+                    <th mat-header-cell *matHeaderCellDef>{{'Naam'}}</th>
+                    <td mat-cell *matCellDef="let row">{{row.name}}</td>
+                </ng-container>
+                <ng-container matColumnDef="AanbodCount">
+                    <th mat-header-cell *matHeaderCellDef>{{'Aanbod tellen'}}</th>
+                    <td mat-cell *matCellDef="let row">{{row.aanbodCount}}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+    </mat-card-content>
+</mat-card>
