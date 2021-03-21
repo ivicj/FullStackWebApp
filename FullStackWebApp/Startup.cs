@@ -44,8 +44,8 @@ namespace FullStackWebApp
 
             services.AddDbContext<MainSqlServerDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
-            
-            services.AddHttpClient<FundaService>()
+
+            services.AddHttpClient<FundaService>();
                 //.SetHandlerLifetime(TimeSpan.FromMinutes(3))  //Set lifetime to 3 minutes
                 //.AddPolicyHandler(GetRetryPolicy());
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
