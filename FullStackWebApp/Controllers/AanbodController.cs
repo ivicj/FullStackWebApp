@@ -10,6 +10,8 @@ using FullStackWebApp.Models;
 using System.Net.Http;
 using AutoMapper;
 using FullStackWebApp.DTOs;
+using FullStackWebApp.Schedulers;
+using Quartz;
 
 namespace FullStackWebApp.Controllers
 {
@@ -18,12 +20,16 @@ namespace FullStackWebApp.Controllers
     public class AanbodController : ControllerBase
     {
         private readonly MainSqlServerDbContext _context;
+        private readonly IServiceProvider _provider;
         private FundaService _service;
+        private IJobExecutionContext _jobContext;
 
-        public AanbodController(MainSqlServerDbContext context, FundaService service)
+
+        public AanbodController(MainSqlServerDbContext context, FundaService service, IServiceProvider provider)
         {
             _context = context;
             _service = service;
+            _provider = provider;
         }
 
         // GET: api/Aanbod/GetAanbodFromUrl
@@ -41,8 +47,22 @@ namespace FullStackWebApp.Controllers
             return Ok();
         }
 
+        // GET: api/Aanbod/TestJob
+        [Route("TestJob")]
+        [HttpGet]
+        public IActionResult TestJob()
+        {
+            var job = new FundaAanbodJob(_provider);
+            var res = job.Execute(_jobContext);
+            if (!res.IsCompletedSuccessfully && res.Exception == null)
+            {
+                return NotFound("Job did not complete successfully");
+            }
+
+            return Ok();
+        }
+
         // GET: api/Aanbod/LeaderBoard/true
-        //[Route("LeaderBoard")]
         [HttpGet("LeaderBoard/{tuin}")]
         public async Task<ActionResult<IEnumerable<MakelaarDTO>>> GetLeaderBoard(bool tuin)
         {

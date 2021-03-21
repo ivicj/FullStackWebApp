@@ -61,7 +61,7 @@ namespace FullStackWebApp
             services.AddSingleton<FundaAanbodJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(FundaAanbodJob),
-                cronExpression: "0 0/15 * 1/1 * ? *")); // run every 15 min
+                cronExpression: "0 0 */12 ? * *")); // run every 12 hours
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
