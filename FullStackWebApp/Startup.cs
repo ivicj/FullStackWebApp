@@ -17,6 +17,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Polly;
+using System.Net.Http;
+using Polly.Extensions.Http;
 
 namespace FullStackWebApp
 {
@@ -42,7 +45,9 @@ namespace FullStackWebApp
             services.AddDbContext<MainSqlServerDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
             
-            services.AddHttpClient<FundaService>();
+            services.AddHttpClient<FundaService>()
+                //.SetHandlerLifetime(TimeSpan.FromMinutes(3))  //Set lifetime to 3 minutes
+                //.AddPolicyHandler(GetRetryPolicy());
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // Add Quartz services
@@ -53,7 +58,7 @@ namespace FullStackWebApp
             services.AddSingleton<FundaAanbodJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(FundaAanbodJob),
-                cronExpression: "0 0/5 * 1/1 * ? *")); // run every 5 min
+                cronExpression: "0 0/15 * 1/1 * ? *")); // run every 15 min
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,6 +81,15 @@ namespace FullStackWebApp
             {
                 endpoints.MapControllers();
             });
+        }
+
+        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
+                                                                            retryAttempt)));
         }
     }
 }

@@ -38,7 +38,7 @@ namespace FullStackWebApp
             return String.Format(url, key, type, zo, page, pageSize);
         }
 
-        public async Task<bool> FetchDataAndPopulateDB<ResponseDTO>()
+        public async Task<bool> FetchDataAndPopulateDB<ResponseDTO>(MainSqlServerDbContext dbContext)
         {
             try
             {
@@ -47,14 +47,25 @@ namespace FullStackWebApp
                 // pokupi sve objekte iz amsterdama sa bastom
                 List<Aanbod> allAanbodWithTuin = await this.FetchAllPages("koop", "/amsterdam/tuin/");
 
-                //@TODO uradi iteraciju da obelezis svima koji imaju tuin na true 
+                //iteration to set tuin to true where needed
+                for (int i = 0; i < allAanbod.Count(); i++)
+                {
+                    for (int j = 0; j < allAanbodWithTuin.Count(); j++)
+                    {
+                        if (allAanbodWithTuin[j].Id.Equals(allAanbod[i].Id))
+                        {
+                            allAanbod[i].Tuin = true;
+                        }
+
+                    }
+                }
 
                 // Truncate table
-                await this.DeleteAllData();
+                await this.DeleteAllData(dbContext);
 
                 //populate database
-                await _context.Aanbod.AddRangeAsync(allAanbod);
-                var numberOfItemsSaved = await _context.SaveChangesAsync();
+                await dbContext.Aanbod.AddRangeAsync(allAanbod);
+                var numberOfItemsSaved = await dbContext.SaveChangesAsync();
                 var success = numberOfItemsSaved > 0 ? true : false;
                 return success;
             }
@@ -65,11 +76,11 @@ namespace FullStackWebApp
             }
         }
 
-        private async Task DeleteAllData()
+        private async Task DeleteAllData(MainSqlServerDbContext dbContext)
         {
-            foreach (var entity in _context.Aanbod)
-                _context.Aanbod.Remove(entity);
-            await _context.SaveChangesAsync();
+            foreach (var entity in dbContext.Aanbod)
+                dbContext.Aanbod.Remove(entity);
+            await dbContext.SaveChangesAsync();
         }
 
         protected async Task<List<Aanbod>> FetchAllPages(string type, string zo)
