@@ -41,11 +41,9 @@ namespace FullStackWebApp
 
             services.AddDbContext<MainSqlServerDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
-
+            
             services.AddHttpClient<FundaService>();
-            //services.AddAutoMapper(typeof(Startup));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
 
             // Add Quartz services
             services.AddHostedService<QuartzHostedService>();

@@ -30,9 +30,9 @@ namespace FullStackWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAanbodFromUrl()
         {
-            var res = await _service.GetData<List<Aanbod>>();
+            var res = await _service.FetchDataAndPopulateDB<bool>();
 
-            if (res == null)
+            if (!res)
             {
                 return NotFound("There is no data");
             }

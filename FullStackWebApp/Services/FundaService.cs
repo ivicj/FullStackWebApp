@@ -38,29 +38,25 @@ namespace FullStackWebApp
             return String.Format(url, key, type, zo, page, pageSize);
         }
 
-        public async Task<List<Aanbod>> GetData<ResponseDTO>()
+        public async Task<bool> FetchDataAndPopulateDB<ResponseDTO>()
         {
             try
             {
                 // pokupi sve objekte iz amsterdama bez obzira dal imaju bastu ili ne
                 List<Aanbod> allAanbod = await this.FetchAllPages("koop", "/amsterdam/");
-
                 // pokupi sve objekte iz amsterdama sa bastom
                 List<Aanbod> allAanbodWithTuin = await this.FetchAllPages("koop", "/amsterdam/tuin/");
 
-
-                //uradi iteraciju da obelezis svima koji imaju tuin na true 
-                //@TODO add transaction
+                //@TODO uradi iteraciju da obelezis svima koji imaju tuin na true 
 
                 // Truncate table
                 await this.DeleteAllData();
 
                 //populate database
                 await _context.Aanbod.AddRangeAsync(allAanbod);
-
-                await _context.SaveChangesAsync();
-
-                return allAanbod;
+                var numberOfItemsSaved = await _context.SaveChangesAsync();
+                var success = numberOfItemsSaved > 0 ? true : false;
+                return success;
             }
             catch (Exception)
             {
