@@ -13,11 +13,13 @@ using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore.Query;
 using System.Net;
+using Microsoft.Extensions.Logging;
 
 namespace FullStackWebApp
 {
     public class FundaService
     {
+        private readonly ILogger<FundaService> _logger;
         private readonly MainSqlServerDbContext _context;
         private readonly IMapper _mapper;
         private readonly HttpClient _client;
@@ -26,8 +28,9 @@ namespace FullStackWebApp
         private const int pageSize = 25;
         private string url = "http://partnerapi.funda.nl/feeds/Aanbod.svc/json/{0}/?type={1}&zo={2}&page={3}&pagesize={4}";
         int maxAttempts = 3;
-        public FundaService(HttpClient client, MainSqlServerDbContext context, IMapper mapper)
+        public FundaService(ILogger<FundaService> logger, HttpClient client, MainSqlServerDbContext context, IMapper mapper)
         {
+            _logger = logger;
             _client = client;
             _context = context;
             _mapper = mapper;
@@ -46,7 +49,7 @@ namespace FullStackWebApp
                 List<Aanbod> aanbods = await this.FetchData();
                 if(aanbods == null)
                 {
-                    //@TODO log
+                    _logger.LogInformation($"Fetching data did not retrive any results at {DateTime.UtcNow.ToLongTimeString()}");
                     return false;
                 }
                 
@@ -54,7 +57,7 @@ namespace FullStackWebApp
                 bool successfulDelete = await this.DeleteAllData(dbContext);
                 if(!successfulDelete)
                 {
-                    //@TODO log
+                    _logger.LogInformation($"Deleting data did not finish sucessfully {DateTime.UtcNow.ToLongTimeString()}");
                     return false;
                 }
 
@@ -64,9 +67,9 @@ namespace FullStackWebApp
                 var success = numberOfItemsSaved > 0 ? true : false;
                 return success;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //@TODO logger
+                _logger.LogError(0, e, "Error while processing request from FetchDataAndPopulateDB");
                 return false;
             }
         }
@@ -100,7 +103,7 @@ namespace FullStackWebApp
                 return true;
             } catch (Exception e)
             {
-                //@TODO log
+                _logger.LogError(0, e, "Error while processing delete all data");
                 return false;
             }
         }
@@ -114,7 +117,7 @@ namespace FullStackWebApp
             ResponseDTO firstPageData = await FetchFromPage(type, zo, 1);
             if (firstPageData == null || firstPageData.Paging == null)
             {
-                //@TODO log
+                _logger.LogInformation($"Fetching first page data did not retrive any results at {DateTime.UtcNow.ToLongTimeString()}");
                 return _mapper.Map<List<AanbodDTO>, List<Aanbod>>(objects);
             }
             for (int i = 1; i < firstPageData.Paging.AantalPaginas; i++) //total number of pages
@@ -122,7 +125,7 @@ namespace FullStackWebApp
                 ResponseDTO pageData = await FetchFromPage(type, zo, i);
                 if(pageData != null)
                 {
-                    // @TODO Log
+                    _logger.LogInformation($"Fetching data from page number {i} did not retrive any results at {DateTime.UtcNow.ToLongTimeString()}");
                     objects.AddRange(pageData.Objects);
                 }
             }
@@ -139,7 +142,7 @@ namespace FullStackWebApp
             {
                 if (maxAttempts == attemptCount)
                 {
-                    // @TODO Log
+                    _logger.LogInformation($"Fetching data attempted {attemptCount} number of times and did not retrive any results at {DateTime.UtcNow.ToLongTimeString()}");
                     return JsonConvert.DeserializeObject<ResponseDTO>(await responseRaw.Content.ReadAsStringAsync());
                 }
                 responseRaw = await _client.GetAsync(url);

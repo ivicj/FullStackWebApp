@@ -24,7 +24,6 @@ namespace FullStackWebApp.Schedulers
                 var dbContext = scope.ServiceProvider.GetService<MainSqlServerDbContext>();
                 var service = scope.ServiceProvider.GetService<FundaService>();
 
-                // fetch makelaars, update DB
                 //call service to get all data and populate database
                 var res = service.FetchDataAndPopulateDB<bool>(dbContext);
                 if (res == null)
