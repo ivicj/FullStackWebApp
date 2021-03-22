@@ -34,7 +34,6 @@ This is full stack project for fetching data that populates database on schedule
 - Via NuGet console, run migrations: `Update-Database`
 - Run default configuration (`IIS Express`)
 
-To run job manually (in order to check results) use endpoint TestJob. Automaticaly job is scheduled for execution every 12 hours.
 
 ## Project structure
 The project is divided in two applications `FullStackWebApp` (backend) and `Client` (frontend).
@@ -46,7 +45,11 @@ The project is divided in two applications `FullStackWebApp` (backend) and `Clie
         - Data from Funda's API is stored in local database as part of the Job.
     - `Services` - data fetching logic is in Service ([Separation of Concerns](https://en.wikipedia.org/wiki/Separation_of_concerns) pattern)
         - Job shouldn't care how data is fetched, and Service doesn't care who's fetching the data.
-    
+    - `AanbodControler` with 3 endpoints:
+        - `TestFetchingData` - test service that fetches data and populates database.
+        - `TestJob` - to run job manually (automaticaly job is scheduled for execution every 12 hours).
+        - `LeaderBoard/{tuin}` - that gets hit by the client application
+
 ## Database Model
 - `Aanbod` table to store all offers
     - `Id` `(int)`
